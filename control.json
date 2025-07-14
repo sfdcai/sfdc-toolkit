@@ -1,5 +1,10 @@
 {
   "isActive": true,
   "latestVersion": "12.0.0",
-  "message": "Welcome! The comparison logic has been optimized. Please report any issues."
+  "welcomeText": "SFDC DevOps Toolkit - Centralized Control",
+  "author": {
+    "name": "Amit Bhardwaj",
+    "linkedin": "linkedin.com/in/salesforce-technical-architect"
+  },
+  "message": "Welcome! All systems operational."
 }
