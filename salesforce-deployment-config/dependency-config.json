@@ -1,0 +1,10 @@
+{
+    "dependencyTypes": {
+      "NewMetadataType": {
+        "EvaluationStrategy": "SourceFileCheck",
+        "SourcePath": "newtype/{NAME}.newtype-meta.xml",
+        "ManualInstructions": "Configure {NAME} in Setup → New Feature",
+        "Documentation": "https://help.salesforce.com/new-feature"
+      }
+    }
+  }
