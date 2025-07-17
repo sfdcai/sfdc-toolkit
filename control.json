@@ -1,10 +1,52 @@
 {
   "isActive": true,
-  "latestVersion": "14.0.0",
-  "welcomeText": "SFDC DevOps Toolkit - Centralized Control",
+  "latestVersion": "14.2.0",
+  "welcomeText": "SFDC DevOps Toolkit - Remote Controlled",
+  "message": "Welcome to the enhanced SFDC DevOps Toolkit! This version includes remote configuration capabilities.",
   "author": {
     "name": "Amit Bhardwaj",
     "linkedin": "linkedin.com/in/salesforce-technical-architect"
   },
-  "message": "Welcome! All systems operational."
+  "configOverrides": {
+    "DefaultApiVersion": "61.0",
+    "CacheDurationHours": 48,
+    "MaxLogSizeMB": 20,
+    "ProjectStructure": {
+      "DeltaDeploymentDir": "delta-deployment-v2",
+      "BackupDir": "project-backups",
+      "TempDir": "temp-workspace"
+    },
+    "DeploymentDefaults": {
+      "TestLevel": "RunAllTestsInOrg",
+      "DeploymentTimeout": 600,
+      "ValidationTimeout": 300,
+      "BackupBeforeDeployment": true,
+      "RollbackOnFailure": true
+    },
+    "SalesforceUrls": {
+      "Production": "https://login.salesforce.com",
+      "Sandbox": "https://test.salesforce.com",
+      "Developer": "https://login.salesforce.com",
+      "PreRelease": "https://prereleases.pre.salesforce.com"
+    }
+  },
+  "featureToggles": {
+    "EnableProgressBars": true,
+    "EnableEmojis": true,
+    "EnableColorOutput": true,
+    "EnableSystemCompatibilityCheck": true,
+    "EnableInputValidation": true,
+    "EnableAdvancedLogging": true,
+    "EnableBackupBeforeOperations": true,
+    "EnableDependencyAnalysis": true
+  },
+  "emergencyControl": {
+    "forceOfflineMode": false,
+    "disableRemoteUpdates": false,
+    "maintenanceMode": false,
+    "maintenanceMessage": "The toolkit is currently undergoing maintenance. Please try again later."
+  },
+  "adminMessage": "This is a sample remote configuration. Upload this to your GitHub repository to control the toolkit remotely.",
+  "lastUpdated": "2025-01-17T10:00:00Z",
+  "controlVersion": "1.0.0"
 }
