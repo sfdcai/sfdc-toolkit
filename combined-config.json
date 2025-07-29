@@ -1,0 +1,263 @@
+{
+  "version": "1.0",
+  "description": "Combined configuration for Salesforce DevOps Toolkit UI",
+  "ui": {
+    "version": "1.0",
+    "tabs": [
+      {
+        "name": "Core",
+        "order": 1,
+        "buttons": [
+          {
+            "label": "Initialize Toolkit",
+            "function": "Initialize-Toolkit",
+            "color": "#2ecc71",
+            "workflowStep": "",
+            "tooltip": "Load the core toolkit functions"
+          },
+          {
+            "label": "Check Prerequisites",
+            "function": "Check-Prerequisites",
+            "color": "#3498db",
+            "workflowStep": "",
+            "tooltip": "Check system and environment prerequisites"
+          },
+          {
+            "label": "Show Toolkit State",
+            "function": "Show-ToolkitState",
+            "color": "#e67e22",
+            "workflowStep": "",
+            "tooltip": "Display current toolkit state"
+          },
+          {
+            "label": "Show Workflow Guide",
+            "function": "Show-WorkflowGuidance",
+            "color": "#1abc9c",
+            "workflowStep": "",
+            "tooltip": "Show step-by-step workflow guidance"
+          },
+          {
+            "label": "Clear Console",
+            "function": "Clear-Console",
+            "color": "#95a5a6",
+            "workflowStep": "",
+            "tooltip": "Clear the output console"
+          }
+        ]
+      },
+      {
+        "name": "Projects",
+        "order": 2,
+        "buttons": [
+          {
+            "label": "Select Project",
+            "function": "Select-Project",
+            "color": "#e74c3c",
+            "workflowStep": "ProjectManagement",
+            "tooltip": "Select an existing project"
+          },
+          {
+            "label": "Create Project",
+            "function": "Create-Project",
+            "color": "#2ecc71",
+            "workflowStep": "ProjectManagement",
+            "tooltip": "Create a new project"
+          }
+        ]
+      },
+      {
+        "name": "Orgs",
+        "order": 3,
+        "buttons": [
+          {
+            "label": "Authorize Org",
+            "function": "Authorize-Org",
+            "color": "#9b59b6",
+            "workflowStep": "OrgManagement",
+            "tooltip": "Authorize a Salesforce org"
+          },
+          {
+            "label": "Select Org",
+            "function": "Select-Org",
+            "color": "#1abc9c",
+            "workflowStep": "OrgManagement",
+            "tooltip": "Select a Salesforce org"
+          },
+          {
+            "label": "List Organizations",
+            "function": "List-Orgs",
+            "color": "#3498db",
+            "workflowStep": "OrgManagement",
+            "tooltip": "List all authorized orgs"
+          },
+          {
+            "label": "Open Org",
+            "function": "Open-Org",
+            "color": "#f1c40f",
+            "workflowStep": "OrgManagement",
+            "tooltip": "Open the selected org in browser"
+          }
+        ]
+      },
+      {
+        "name": "Deploy",
+        "order": 4,
+        "buttons": [
+          {
+            "label": "Quick Visual Compare",
+            "function": "Run-Quick-Visual-Compare",
+            "color": "#9b59b6",
+            "workflowStep": "CompareDeploy",
+            "tooltip": "Quickly compare orgs visually"
+          },
+          {
+            "label": "Generate Delta Package",
+            "function": "Generate-Delta-From-Local",
+            "color": "#2ecc71",
+            "workflowStep": "CompareDeploy",
+            "isLongRunning": true,
+            "tooltip": "Generate a delta package from local changes"
+          },
+          {
+            "label": "Deploy Metadata (Advanced)",
+            "function": "Deploy-Metadata-Advanced",
+            "color": "#e74c3c",
+            "workflowStep": "CompareDeploy",
+            "isLongRunning": true,
+            "tooltip": "Deploy metadata with advanced options"
+          },
+          {
+            "label": "Intelligent Deployment",
+            "function": "Invoke-IntelligentDeployment",
+            "color": "#34495e",
+            "workflowStep": "CompareDeploy",
+            "isLongRunning": true,
+            "tooltip": "Run intelligent deployment"
+          },
+          {
+            "label": "Retrieve Full Comparison",
+            "function": "Retrieve-For-Full-Comparison",
+            "color": "#e67e22",
+            "workflowStep": "CompareDeploy",
+            "isLongRunning": true,
+            "tooltip": "Retrieve a full comparison between orgs"
+          },
+          {
+            "label": "Validate Deployment",
+            "function": "Invoke-DeploymentValidation",
+            "color": "#1abc9c",
+            "workflowStep": "CompareDeploy",
+            "isLongRunning": true,
+            "tooltip": "Validate the deployment"
+          }
+        ]
+      },
+      {
+        "name": "DevOps",
+        "order": 5,
+        "buttons": [
+          {
+            "label": "Update Metadata Mappings",
+            "function": "Update-Metadata-Mappings",
+            "color": "#1abc9c",
+            "workflowStep": "AdvancedFunctions",
+            "isLongRunning": true,
+            "tooltip": "Update metadata mapping files"
+          },
+          {
+            "label": "Analyze Dependencies",
+            "function": "Get-ComponentDependencies",
+            "color": "#34495e",
+            "workflowStep": "AdvancedFunctions",
+            "isLongRunning": true,
+            "tooltip": "Analyze component dependencies"
+          },
+          {
+            "label": "Test Metadata Integrity",
+            "function": "Test-MetadataIntegrity",
+            "color": "#c0392b",
+            "workflowStep": "AdvancedFunctions",
+            "isLongRunning": true,
+            "tooltip": "Test the integrity of metadata"
+          },
+          {
+            "label": "Generate Manual Instructions",
+            "function": "Generate-ManualInstructionsFile",
+            "color": "#e67e22",
+            "workflowStep": "AdvancedFunctions",
+            "tooltip": "Generate manual deployment instructions"
+          },
+          {
+            "label": "Show Iterative Results",
+            "function": "Show-IterativeValidationResults",
+            "color": "#1abc9c",
+            "workflowStep": "AdvancedFunctions",
+            "tooltip": "Show results of iterative validation"
+          }
+        ]
+      },
+      {
+        "name": "Manifest",
+        "order": 6,
+        "buttons": [
+          {
+            "label": "Generate Manifest",
+            "function": "Handle-Manifest-Generation",
+            "color": "#e67e22",
+            "workflowStep": "Utilities",
+            "tooltip": "Generate a manifest file"
+          },
+          {
+            "label": "Generate Full Manifest",
+            "function": "Generate-Full-Manifest",
+            "color": "#3498db",
+            "workflowStep": "Utilities",
+            "tooltip": "Generate a full manifest"
+          },
+          {
+            "label": "Generate Custom Manifest",
+            "function": "Generate-Custom-Manifest-Interactive",
+            "color": "#9b59b6",
+            "workflowStep": "Utilities",
+            "tooltip": "Generate a custom manifest interactively"
+          },
+          {
+            "label": "Edit Project Settings",
+            "function": "Edit-ProjectSettings",
+            "color": "#9b59b6",
+            "workflowStep": "Utilities",
+            "tooltip": "Edit the current project settings"
+          }
+        ]
+      },
+      {
+        "name": "System",
+        "order": 7,
+        "buttons": [
+          {
+            "label": "System Information",
+            "function": "Get-SystemInfo",
+            "color": "#3498db",
+            "workflowStep": "Utilities",
+            "tooltip": "Show system information"
+          },
+          {
+            "label": "View Log File",
+            "function": "View-LogFile",
+            "color": "#95a5a6",
+            "workflowStep": "Utilities",
+            "tooltip": "View the log file"
+          },
+          {
+            "label": "Clear Project Cache",
+            "function": "Clear-ProjectCache",
+            "color": "#95a5a6",
+            "workflowStep": "Utilities",
+            "tooltip": "Clear the project cache"
+          }
+        ]
+      }
+    ]
+  },
+  "toolkitScript": "# This would contain the actual toolkit script content\n# For now, this is a placeholder - you would embed the complete.ps1 content here"
+} 
