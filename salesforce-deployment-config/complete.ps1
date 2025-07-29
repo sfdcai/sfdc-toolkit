@@ -5707,7 +5707,8 @@ try {
     # Ignore console setting errors in EXE mode
 }
 
-# Only run Main if the script is executed directly, not when dot-sourced (e.g., from a UI)
-if ($MyInvocation.InvocationName -ne '.') {
+# Only run Main if the script is executed directly.
+# This prevents the console menu from starting when the script is dot-sourced or invoked from another script (e.g., a UI).
+if ((Get-PSCallStack).Count -eq 1) {
     Main
 }
