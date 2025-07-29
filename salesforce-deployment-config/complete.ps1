@@ -5707,8 +5707,8 @@ try {
     # Ignore console setting errors in EXE mode
 }
 
-# Only run Main if the script is executed directly.
-# This prevents the console menu from starting when the script is dot-sourced or invoked from another script (e.g., a UI).
-if ((Get-PSCallStack).Count -eq 1) {
+# Only run Main if the script is executed directly AND not in a UI context.
+# This prevents the console menu from starting when the script is dot-sourced or invoked from another script (like a UI).
+if ((Get-PSCallStack).Count -eq 1 -and -not (Get-Variable -Name 'IsUiContext' -Scope 'Global' -ErrorAction SilentlyContinue)) {
     Main
 }
