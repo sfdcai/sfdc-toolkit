@@ -1,5 +1,6 @@
 {
-  "version": "2.0",
+  "version": "1.0",
+  "description": "Salesforce DevOps Toolkit UI Configuration",
   "tabs": [
     {
       "name": "🚀 Core & Project",
@@ -112,28 +113,28 @@
       "order": 4,
       "buttons": [
         {
-            "label": "Show Toolkit State",
-            "function": "Show-ToolkitState",
-            "color": "#8e562e",
-            "icon": "ℹ️",
-            "tooltip": "Display the current state of all toolkit variables.",
-            "requires": "toolkit"
+          "label": "Show Toolkit State",
+          "function": "Show-ToolkitState",
+          "color": "#8e562e",
+          "icon": "ℹ️",
+          "tooltip": "Display the current state of all toolkit variables.",
+          "requires": "toolkit"
         },
         {
-            "label": "Clear Console",
-            "function": "Clear-Console",
-            "color": "#8e562e",
-            "icon": "🧹",
-            "tooltip": "Clear all text from the output console.",
-            "requires": null
+          "label": "Clear Console",
+          "function": "Clear-Console",
+          "color": "#8e562e",
+          "icon": "🧹",
+          "tooltip": "Clear all text from the output console.",
+          "requires": null
         },
         {
-            "label": "View Log File",
-            "function": "View-LogFile",
-            "color": "#8e562e",
-            "icon": "📜",
-            "tooltip": "Open the detailed log file for the current session.",
-            "requires": "project"
+          "label": "View Log File",
+          "function": "View-LogFile",
+          "color": "#8e562e",
+          "icon": "📜",
+          "tooltip": "Open the detailed log file for the current session.",
+          "requires": "project"
         }
       ]
     }
