@@ -1,11 +1,11 @@
 {
   "isActive": true,
-  "latestVersion": "15.2.0",
+  "latestVersion": "14.2.0",
   "welcomeText": "SFDC DevOps Toolkit - Remote Controlled",
   "message": "Welcome to the enhanced SFDC DevOps Toolkit! This version includes remote configuration capabilities.",
   "author": {
     "name": "Amit Bhardwaj",
-    "linkedin": "lhttps://inkedin.com/in/salesforce-technical-architect"
+    "linkedin": "https://inkedin.com/in/salesforce-technical-architect"
   },
   "configOverrides": {
     "DefaultApiVersion": "61.0",
