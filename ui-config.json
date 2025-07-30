@@ -127,14 +127,6 @@
           "icon": "🧹",
           "tooltip": "Clear all text from the output console.",
           "requires": null
-        },
-        {
-          "label": "View Log File",
-          "function": "View-LogFile",
-          "color": "#8e562e",
-          "icon": "📜",
-          "tooltip": "Open the detailed log file for the current session.",
-          "requires": "project"
         }
       ]
     }
