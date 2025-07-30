@@ -1,0 +1,142 @@
+{
+  "version": "1.0",
+  "description": "Salesforce DevOps Toolkit UI Configuration",
+  "tabs": [
+    {
+      "name": "🚀 Core & Project",
+      "order": 1,
+      "buttons": [
+        {
+          "label": "Initialize Toolkit",
+          "function": "Initialize-Toolkit",
+          "color": "#007ACC",
+          "icon": "⚡",
+          "tooltip": "Loads all toolkit functions and prepares the environment.",
+          "requires": null
+        },
+        {
+          "label": "Check Prerequisites",
+          "function": "Check-Prerequisites",
+          "color": "#007ACC",
+          "icon": "✔️",
+          "tooltip": "Verifies that all required dependencies like SFDX CLI are installed.",
+          "requires": "toolkit"
+        },
+        {
+          "label": "Create Project",
+          "function": "Create-Project",
+          "color": "#5c8a00",
+          "icon": "➕",
+          "tooltip": "Create a new DevOps project structure.",
+          "requires": "toolkit"
+        },
+        {
+          "label": "Select Project",
+          "function": "Select-Project",
+          "color": "#5c8a00",
+          "icon": "📂",
+          "tooltip": "Select an existing project folder to work on.",
+          "requires": "toolkit"
+        }
+      ]
+    },
+    {
+      "name": "🏢 Orgs & Auth",
+      "order": 2,
+      "buttons": [
+        {
+          "label": "Authorize an Org",
+          "function": "Authorize-Org",
+          "color": "#d83b01",
+          "icon": "🔑",
+          "tooltip": "Connect the toolkit to a new Salesforce Org.",
+          "requires": "project"
+        },
+        {
+          "label": "Select Orgs",
+          "function": "Select-Org",
+          "color": "#d83b01",
+          "icon": "🎯",
+          "tooltip": "Set the source and destination orgs for your project.",
+          "requires": "project"
+        },
+        {
+          "label": "List Orgs",
+          "function": "List-Orgs",
+          "color": "#b3b3b3",
+          "icon": "📋",
+          "tooltip": "Display all currently authorized orgs.",
+          "requires": "project"
+        },
+        {
+          "label": "Open Org",
+          "function": "Open-Org",
+          "color": "#b3b3b3",
+          "icon": "🌐",
+          "tooltip": "Open the selected org in your default web browser.",
+          "requires": "project"
+        }
+      ]
+    },
+    {
+      "name": "🔄 Compare & Deploy",
+      "order": 3,
+      "buttons": [
+        {
+          "label": "Generate Delta Package",
+          "function": "Generate-Delta-From-Local",
+          "color": "#e8a300",
+          "icon": "🔍",
+          "tooltip": "Compare orgs and generate a package of differences.",
+          "requires": "orgs"
+        },
+        {
+          "label": "Deploy Metadata",
+          "function": "Deploy-Metadata-Advanced",
+          "color": "#2b88d8",
+          "icon": "🚀",
+          "tooltip": "Deploy the generated package to the destination org.",
+          "requires": "orgs"
+        },
+        {
+          "label": "Validate Deployment",
+          "function": "Invoke-DeploymentValidation",
+          "color": "#2b88d8",
+          "icon": "🛡️",
+          "tooltip": "Run a validation-only deployment to check for errors.",
+          "requires": "orgs"
+        }
+      ]
+    },
+    {
+      "name": "🛠️ Utilities",
+      "order": 4,
+      "buttons": [
+        {
+          "label": "Show Toolkit State",
+          "function": "Show-ToolkitState",
+          "color": "#8e562e",
+          "icon": "ℹ️",
+          "tooltip": "Display the current state of all toolkit variables.",
+          "requires": "toolkit"
+        },
+        {
+          "label": "Clear Console",
+          "function": "Clear-Console",
+          "color": "#8e562e",
+          "icon": "🧹",
+          "tooltip": "Clear all text from the output console.",
+          "requires": null
+        },
+        {
+          "label": "View Log File",
+          "function": "View-LogFile",
+          "color": "#8e562e",
+          "icon": "📜",
+          "tooltip": "Open the detailed log file for the current session.",
+          "requires": "project"
+        }
+      ]
+    }
+  ]
+}
