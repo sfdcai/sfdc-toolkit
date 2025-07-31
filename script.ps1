@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     The definitive, professional-grade PowerShell toolkit for Salesforce DevOps, featuring a
     full folder-based project structure, advanced deployment capabilities, and a 100% accurate,
@@ -27,7 +27,9 @@
 
 #region Script Configuration and State
 [CmdletBinding()]
-param()
+param(
+    [switch]$NonInteractive = $false
+)
 
 # Self-Contained Configuration System - EXE Ready
 $Script:VERSION = "14.2.0"
@@ -35,6 +37,10 @@ $Script:VERSION = "14.2.0"
 # Navigation Breadcrumb System
 $Script:NavigationStack = @()
 $Script:CurrentLocation = "Main Menu"
+
+# Initialize author information with defaults
+$Script:AuthorName = "Amit Bhardwaj"
+$Script:AuthorLinkedIn = "linkedin.com/in/salesforce-technical-architect"
 $Script:REMOTE_CONTROL_URL = "https://raw.githubusercontent.com/sfdcai/sfdc-toolkit/refs/heads/main/control.json"
 $Script:DEPENDENCY_CONFIG_URL = "https://raw.githubusercontent.com/sfdcai/sfdc-toolkit/refs/heads/main/salesforce-deployment-config/dependency-config.json"
 $Script:MAX_LOG_SIZE_MB = 10
@@ -135,12 +141,14 @@ $Script:EMBEDDED_CONFIG = @{
     }
 }
 
-# Initialize dynamic configuration
-$Script:Config = $null
-$Script:TOOLKIT_ROOT_CONFIG_DIR = $null
-$Script:ROOT_PROJECT_LIST_FILE = $null
-$Script:METADATA_MAP_FILE = $null
-$Script:GLOBAL_LOG_FILE = $null
+# Initialize dynamic configuration with safe defaults
+$Script:Config = $Script:EMBEDDED_CONFIG.Clone()
+# Safe PSScriptRoot handling for EXE mode
+$scriptRootPath = if ($PSScriptRoot) { $PSScriptRoot } else { $PWD.Path }
+$Script:TOOLKIT_ROOT_CONFIG_DIR = Join-Path -Path $scriptRootPath -ChildPath ".sfdc-toolkit"
+$Script:ROOT_PROJECT_LIST_FILE = Join-Path -Path $Script:TOOLKIT_ROOT_CONFIG_DIR -ChildPath "projects.json"
+$Script:METADATA_MAP_FILE = Join-Path -Path $Script:TOOLKIT_ROOT_CONFIG_DIR -ChildPath "metadata_map.json"
+$Script:GLOBAL_LOG_FILE = Join-Path -Path $Script:TOOLKIT_ROOT_CONFIG_DIR -ChildPath "toolkit.log"
 
 # Runtime variables loaded on startup and after project selection
 $Script:MetadataMap = @{}
@@ -230,8 +238,9 @@ function Initialize-ToolkitConfiguration {
             Write-Host "⚠️ Remote configuration unavailable, using embedded defaults" -ForegroundColor Yellow
         }
         
-        # Initialize derived paths
-        $Script:TOOLKIT_ROOT_CONFIG_DIR = Join-Path -Path $PSScriptRoot -ChildPath $Script:Config.ToolkitRootConfigDir
+        # Initialize derived paths with safe PSScriptRoot handling
+        $safeScriptRoot = if ($PSScriptRoot) { $PSScriptRoot } else { $PWD.Path }
+        $Script:TOOLKIT_ROOT_CONFIG_DIR = Join-Path -Path $safeScriptRoot -ChildPath $Script:Config.ToolkitRootConfigDir
         $Script:ROOT_PROJECT_LIST_FILE = Join-Path -Path $Script:TOOLKIT_ROOT_CONFIG_DIR -ChildPath "projects.json"
         $Script:METADATA_MAP_FILE = Join-Path -Path $Script:TOOLKIT_ROOT_CONFIG_DIR -ChildPath "metadata_map.json"
         $Script:GLOBAL_LOG_FILE = Join-Path -Path $Script:TOOLKIT_ROOT_CONFIG_DIR -ChildPath "toolkit.log"
@@ -248,7 +257,8 @@ function Initialize-ToolkitConfiguration {
         
         # Emergency fallback to basic embedded config
         $Script:Config = $Script:EMBEDDED_CONFIG.Clone()
-        $Script:TOOLKIT_ROOT_CONFIG_DIR = Join-Path -Path $PSScriptRoot -ChildPath $Script:Config.ToolkitRootConfigDir
+        $safeScriptRoot = if ($PSScriptRoot) { $PSScriptRoot } else { $PWD.Path }
+        $Script:TOOLKIT_ROOT_CONFIG_DIR = Join-Path -Path $safeScriptRoot -ChildPath $Script:Config.ToolkitRootConfigDir
         $Script:ROOT_PROJECT_LIST_FILE = Join-Path -Path $Script:TOOLKIT_ROOT_CONFIG_DIR -ChildPath "projects.json"
         $Script:METADATA_MAP_FILE = Join-Path -Path $Script:TOOLKIT_ROOT_CONFIG_DIR -ChildPath "metadata_map.json"
         $Script:GLOBAL_LOG_FILE = Join-Path -Path $Script:TOOLKIT_ROOT_CONFIG_DIR -ChildPath "toolkit.log"
@@ -284,11 +294,17 @@ function Invoke-HttpRequestWithLogging {
         "[$timestamp] [DEBUG] User-Agent: $UserAgent"
     )
     
-    # Force write to global log file
-    $globalLogFile = Join-Path -Path $PSScriptRoot -ChildPath ".sfdc-toolkit\toolkit.log"
+    # Force write to global log file with safe path handling
+    $scriptRoot = if ($PSScriptRoot) { $PSScriptRoot } else { $PWD.Path }
+    $globalLogFile = Join-Path -Path $scriptRoot -ChildPath ".sfdc-toolkit\toolkit.log"
     $globalLogDir = Split-Path $globalLogFile -Parent
     if (-not (Test-Path $globalLogDir)) {
-        New-Item -Path $globalLogDir -ItemType Directory -Force | Out-Null
+        try {
+            New-Item -Path $globalLogDir -ItemType Directory -Force | Out-Null
+        } catch {
+            # Fallback to temp directory if can't create in script root
+            $globalLogFile = Join-Path -Path $env:TEMP -ChildPath "sfdc-toolkit.log"
+        }
     }
     
     foreach ($msg in $logMessages) {
@@ -1035,7 +1051,7 @@ function Test-InputValidation {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true)][string]$InputValue,
+        [Parameter(Mandatory = $true)][AllowEmptyString()][string]$InputValue,
         [Parameter(Mandatory = $true)][string]$Type,
         [Parameter(Mandatory = $false)][hashtable]$ValidationParams = @{}
     )
@@ -1066,12 +1082,12 @@ function Test-InputValidation {
         
         "path" {
             if ([string]::IsNullOrWhiteSpace($InputValue)) {
-                return @{ IsValid = $false; Message = "Path cannot be empty" }
+                return @{ IsValid = $true; Message = "" }
             }
-            if (-not (Test-Path $Input -IsValid)) {
+            if (-not (Test-Path $InputValue -IsValid)) {
                 return @{ IsValid = $false; Message = "Invalid path format" }
             }
-            if ($ValidationParams.ContainsKey("MustExist") -and $ValidationParams.MustExist -and -not (Test-Path $Input)) {
+            if ($ValidationParams.ContainsKey("MustExist") -and $ValidationParams.MustExist -and -not (Test-Path $InputValue)) {
                 return @{ IsValid = $false; Message = "Path does not exist" }
             }
             return @{ IsValid = $true; Message = "" }
@@ -1081,10 +1097,10 @@ function Test-InputValidation {
             if ([string]::IsNullOrWhiteSpace($InputValue)) {
                 return @{ IsValid = $false; Message = "API version cannot be empty" }
             }
-            if ($Input -notmatch '^\\d+\\.\\d+$') {
+            if ($InputValue -notmatch '^\\d+\\.\\d+$') {
                 return @{ IsValid = $false; Message = "API version must be in format XX.Y (e.g., 61.0)" }
             }
-            $version = [double]$Input
+            $version = [double]$InputValue
             if ($version -lt 30.0 -or $version -gt 100.0) {
                 return @{ IsValid = $false; Message = "API version must be between 30.0 and 100.0" }
             }
@@ -1095,10 +1111,10 @@ function Test-InputValidation {
             if ([string]::IsNullOrWhiteSpace($InputValue)) {
                 return @{ IsValid = $false; Message = "Selection cannot be empty" }
             }
-            if ($Input -notmatch '^\\d+$') {
+            if ($InputValue -notmatch '^\\d+$') {
                 return @{ IsValid = $false; Message = "Please enter a number" }
             }
-            $option = [int]$Input
+            $option = [int]$InputValue
             $maxOption = $ValidationParams.MaxOption
             if ($option -lt 1 -or $option -gt $maxOption) {
                 return @{ IsValid = $false; Message = "Please enter a number between 1 and $maxOption" }
@@ -1413,7 +1429,11 @@ function Get-FileHashCompat {
 }
 
 function Show-CreditHeader {
-    $credit = "Created by $($Script:AuthorName) ($($Script:AuthorLinkedIn))"
+    # Ensure author information is always available
+    $authorName = if ($Script:AuthorName) { $Script:AuthorName } else { "Amit Bhardwaj" }
+    $authorLinkedIn = if ($Script:AuthorLinkedIn) { $Script:AuthorLinkedIn } else { "linkedin.com/in/salesforce-technical-architect" }
+    
+    $credit = "Created by $authorName ($authorLinkedIn)"
     Write-Host "`n$credit" -ForegroundColor DarkGray
 }
 
@@ -1583,14 +1603,14 @@ function Show-FileProcessingProgress {
     # Debug: Also show immediate console output for first few files
     if ($CurrentIndex -le 5) {
         Write-Host "DEBUG: Processing file $CurrentIndex - $displayFile" -ForegroundColor "Magenta"
-        [Console]::Out.Flush()
+        try { [Console]::Out.Flush() } catch { }
     }
     
     # Also show console output for important milestones and every 50 files for better feedback
     if ($CurrentIndex % 50 -eq 0 -or $CurrentIndex -eq 1 -or $CurrentIndex -eq $TotalFiles) {
         Write-Host "📁 [$CurrentIndex/$TotalFiles] Processing: $displayFile" -ForegroundColor "Cyan"
         # Force console output to be visible
-        [Console]::Out.Flush()
+        try { [Console]::Out.Flush() } catch { }
     }
 }
 
@@ -1727,16 +1747,16 @@ function Get-EnhancedUserInput {
             return $DefaultValue
         }
         
-        if ($input.ToLower() -eq 'h' -and $ShowHelp) {
+        if ($input -and $input.ToLower() -eq 'h' -and $ShowHelp) {
             Show-NavigationHelp
             continue
         }
         
-        if ($input.ToLower() -eq 'b') {
+        if ($input -and $input.ToLower() -eq 'b') {
             return 'b'
         }
         
-        if ($input.ToLower() -eq 'q') {
+        if ($input -and $input.ToLower() -eq 'q') {
             return 'q'
         }
         
@@ -2054,6 +2074,10 @@ function Select-Project {
     Write-Host '  [N] Create a New Project'
 
     $choice = Read-Host '> Enter your choice'
+    if (-not $choice) {
+        Write-Log -Level WARN "No choice entered. Exiting."
+        return $null
+    }
     if ($choice.ToLower() -eq 'n') {
         Write-Log -Level INFO 'User chose to create a new project.'
         return Create-Project
@@ -2084,8 +2108,8 @@ function Create-Project {
         # Get validated project name
         $projectName = Get-ValidatedInput -Prompt 'Enter a name for your new project (e.g., My-Awesome-Project)' -Type "projectname"
         
-        # Get validated project path
-        $defaultPath = $PSScriptRoot
+        # Get validated project path with safe default
+        $defaultPath = if ($PSScriptRoot) { $PSScriptRoot } else { $PWD.Path }
         $projectBasePath = Get-ValidatedInput -Prompt "Enter path to create project folder (default: '$defaultPath')" -Type "path" -ValidationParams @{ MustExist = $true }
         if ([string]::IsNullOrWhiteSpace($projectBasePath)) { $projectBasePath = $defaultPath }
         
@@ -2213,7 +2237,7 @@ function Show-Banner {
         [Parameter(Mandatory = $true)][string]$Title,
         [Parameter(Mandatory = $false)][string]$BreadcrumbPath = ""
     )
-    Clear-Host
+    try { Clear-Host } catch { }
     
     $textColor = "Cyan"
     Show-CreditHeader
@@ -2309,7 +2333,7 @@ function Check-Prerequisites {
     $startTime = Start-Operation -OperationName "System Readiness Check"
     $allGood = $true
     try {
-        if (-not $ForceRefresh -and $Script:Settings.SystemInfo -and ( (New-TimeSpan -Start ([datetime]$Script:Settings.SystemInfo.LastCheck) -End (Get-Date)).TotalHours -lt $Script:CACHE_DURATION_HOURS) ) {
+        if (-not $ForceRefresh -and $Script:Settings.SystemInfo -and $Script:Settings.SystemInfo.LastCheck -and ( (New-TimeSpan -Start ([datetime]$Script:Settings.SystemInfo.LastCheck) -End (Get-Date)).TotalHours -lt $Script:CACHE_DURATION_HOURS) ) {
             Write-Log -Level INFO "System check results from cache."
             foreach($item in $Script:Settings.SystemInfo.Software) {
                 Write-Host ("  [*] $($item.Name)... ") -NoNewline
@@ -2340,6 +2364,8 @@ function Check-Prerequisites {
             $liveSoftwareStatus += $swObject
         }
         if (-not $Script:Settings.PSObject.Properties['SystemInfo']) { $Script:Settings | Add-Member -MemberType NoteProperty -Name 'SystemInfo' -Value ([pscustomobject]@{}) }
+        if (-not $Script:Settings.SystemInfo.PSObject.Properties['Software']) { $Script:Settings.SystemInfo | Add-Member -MemberType NoteProperty -Name 'Software' -Value @() }
+        if (-not $Script:Settings.SystemInfo.PSObject.Properties['LastCheck']) { $Script:Settings.SystemInfo | Add-Member -MemberType NoteProperty -Name 'LastCheck' -Value $null }
         $Script:Settings.SystemInfo.Software = $liveSoftwareStatus # Assign the software status directly
         $Script:Settings.SystemInfo.LastCheck = (Get-Date -Format "o") # Update LastCheck here
         Save-Settings
@@ -2408,10 +2434,12 @@ function Select-Org {
                 $orgsJson = $orgsResult | ConvertFrom-Json
                 $orgsList = @($orgsJson.result.nonScratchOrgs) + @($orgsJson.result.scratchOrgs)
                 Set-CachedData -CacheKey "OrgList" -Data $orgsList
+                if (-not $Script:Settings.PSObject.Properties['Orgs']) { $Script:Settings | Add-Member -MemberType NoteProperty -Name 'Orgs' -Value @() }
                 $Script:Settings.Orgs = $orgsList
                 Write-Log -Level INFO "Fetched and cached $($Script:Settings.Orgs.Count) orgs."
             } catch { Write-Log -Level ERROR "Failed to list orgs: $($_.Exception.Message | Out-String)"; Read-Host; return }
         } else {
+            if (-not $Script:Settings.PSObject.Properties['Orgs']) { $Script:Settings | Add-Member -MemberType NoteProperty -Name 'Orgs' -Value @() }
             $Script:Settings.Orgs = $cachedOrgs
             Write-Log -Level INFO "Using cached org list ($($cachedOrgs.Count) orgs)."
         }
@@ -2909,7 +2937,7 @@ function Create-Delta-Package {
         $foundChanges = $true
         $outputPath = Join-Path -Path $DeltaPackageDir -ChildPath "package.xml"
         Write-Host "⚙️ Generating package.xml with $($additiveTypes.Keys.Count) metadata types..." -ForegroundColor "Yellow"
-        [Console]::Out.Flush()
+        try { [Console]::Out.Flush() } catch { }
         Generate-Package-Xml -TypesHashtable $additiveTypes -OutputPath $outputPath -ApiVersion $ApiVersion
         Write-Log -Level INFO "Additive changes found. Created 'package.xml' in '$DeltaPackageDir'"
         Write-Host "✅ Created package.xml with additive changes" -ForegroundColor "Green"
@@ -2924,7 +2952,7 @@ function Create-Delta-Package {
         $foundChanges = $true
         $destructiveXmlPath = Join-Path -Path $DeltaPackageDir -ChildPath "destructiveChanges.xml"
         Write-Host "⚙️ Generating destructiveChanges.xml with $($destructiveTypes.Keys.Count) metadata types..." -ForegroundColor "Yellow"
-        [Console]::Out.Flush()
+        try { [Console]::Out.Flush() } catch { }
         Generate-Package-Xml -TypesHashtable $destructiveTypes -OutputPath $destructiveXmlPath -ApiVersion $ApiVersion
         Write-Log -Level INFO "Destructive changes found. Created 'destructiveChanges.xml' in '$DeltaPackageDir'"
         Write-Host "✅ Created destructiveChanges.xml with destructive changes" -ForegroundColor "Green"
@@ -5668,7 +5696,14 @@ function Main {
 }
 
 # --- Script Entry Point ---
-$Host.UI.RawUI.BackgroundColor = 'Black'
-$Host.UI.RawUI.ForegroundColor = 'White'
-Clear-Host
+# Handle console settings safely for EXE mode
+try {
+    if ($Host.UI.RawUI) {
+        $Host.UI.RawUI.BackgroundColor = 'Black'
+        $Host.UI.RawUI.ForegroundColor = 'White'
+    }
+    try { Clear-Host } catch { }
+} catch {
+    # Ignore console setting errors in EXE mode
+}
 Main
