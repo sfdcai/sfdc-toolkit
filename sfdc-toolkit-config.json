@@ -1,0 +1,271 @@
+{
+  "version": "14.2.0",
+  "description": "Enhanced SFDC DevOps Toolkit Configuration",
+  "lastUpdated": "2025-01-17T10:00:00Z",
+  "author": {
+    "name": "Amit Bhardwaj",
+    "linkedin": "https://linkedin.com/in/salesforce-technical-architect"
+  },
+  "toolkit": {
+    "name": "SFDC DevOps Toolkit",
+    "version": "14.2.0",
+    "type": "Production-Ready",
+    "compatibility": {
+      "windows": {
+        "minimum": "Windows 10",
+        "recommended": "Windows 11",
+        "tested": ["Windows 10", "Windows 11", "Windows Server 2019", "Windows Server 2022"]
+      },
+      "powershell": {
+        "minimum": "5.1",
+        "recommended": "7.0+",
+        "executionPolicy": ["RemoteSigned", "Unrestricted"]
+      },
+      "salesforceCli": {
+        "minimum": "7.0.0",
+        "recommended": "latest"
+      }
+    }
+  },
+  "features": {
+    "core": {
+      "orgManagement": true,
+      "projectManagement": true,
+      "metadataComparison": true,
+      "deltaGeneration": true,
+      "deployment": true,
+      "rollback": true
+    },
+    "advanced": {
+      "intelligentDeployment": true,
+      "backupRestore": true,
+      "auditLogging": true,
+      "errorHandling": true,
+      "progressTracking": true,
+      "dependencyAnalysis": true
+    },
+    "ui": {
+      "colorOutput": true,
+      "progressBars": true,
+      "interactiveMenus": true,
+      "contextualHelp": true
+    }
+  },
+  "defaults": {
+    "apiVersion": "61.0",
+    "logLevel": "INFO",
+    "testLevel": "RunLocalTests",
+    "deploymentTimeout": 600,
+    "validationTimeout": 300,
+    "backupBeforeDeployment": true,
+    "rollbackOnFailure": true
+  },
+  "paths": {
+    "configDir": ".sfdc-toolkit",
+    "logDir": ".sfdc-toolkit/logs",
+    "backupDir": ".sfdc-toolkit/backups",
+    "tempDir": ".sfdc-toolkit/temp",
+    "cacheDir": ".sfdc-toolkit/cache"
+  },
+  "logging": {
+    "levels": ["DEBUG", "INFO", "WARN", "ERROR", "AUDIT"],
+    "files": {
+      "main": "toolkit.log",
+      "error": "errors.log",
+      "audit": "audit.log",
+      "deployment": "deployments.log"
+    },
+    "maxSizeMB": 50,
+    "rotation": {
+      "enabled": true,
+      "maxFiles": 10,
+      "compressOld": true
+    }
+  },
+  "deployment": {
+    "strategies": {
+      "quick": {
+        "description": "Fast deployment with minimal validation",
+        "testLevel": "NoTestRun",
+        "validation": false
+      },
+      "standard": {
+        "description": "Standard deployment with local tests",
+        "testLevel": "RunLocalTests",
+        "validation": true
+      },
+      "comprehensive": {
+        "description": "Full deployment with all tests",
+        "testLevel": "RunAllTestsInOrg",
+        "validation": true,
+        "backup": true
+      },
+      "intelligent": {
+        "description": "Smart deployment with rollback capability",
+        "testLevel": "RunLocalTests",
+        "validation": true,
+        "backup": true,
+        "rollback": true,
+        "monitoring": true
+      }
+    },
+    "safety": {
+      "requireConfirmation": true,
+      "backupBeforeDeploy": true,
+      "validateFirst": true,
+      "rollbackOnFailure": true,
+      "maxRetries": 3
+    }
+  },
+  "orgs": {
+    "types": {
+      "production": {
+        "instanceUrl": "https://login.salesforce.com",
+        "requiresConfirmation": true,
+        "backupRequired": true
+      },
+      "sandbox": {
+        "instanceUrl": "https://test.salesforce.com",
+        "requiresConfirmation": false,
+        "backupRequired": false
+      },
+      "developer": {
+        "instanceUrl": "https://login.salesforce.com",
+        "requiresConfirmation": false,
+        "backupRequired": false
+      },
+      "scratch": {
+        "instanceUrl": "https://login.salesforce.com",
+        "requiresConfirmation": false,
+        "backupRequired": false
+      }
+    }
+  },
+  "metadata": {
+    "types": {
+      "customObject": {
+        "directory": "objects",
+        "extension": ".object-meta.xml",
+        "requiresActivation": false
+      },
+      "apexClass": {
+        "directory": "classes",
+        "extension": ".cls",
+        "requiresActivation": false
+      },
+      "apexTrigger": {
+        "directory": "triggers",
+        "extension": ".trigger",
+        "requiresActivation": false
+      },
+      "flow": {
+        "directory": "flows",
+        "extension": ".flow-meta.xml",
+        "requiresActivation": true
+      },
+      "permissionSet": {
+        "directory": "permissionsets",
+        "extension": ".permissionset-meta.xml",
+        "requiresActivation": false
+      },
+      "profile": {
+        "directory": "profiles",
+        "extension": ".profile-meta.xml",
+        "requiresActivation": false
+      }
+    },
+    "comparison": {
+      "ignoreWhitespace": true,
+      "ignoreComments": true,
+      "caseSensitive": false,
+      "binaryComparison": true
+    }
+  },
+  "ui": {
+    "theme": {
+      "colors": {
+        "primary": "Cyan",
+        "secondary": "Yellow",
+        "success": "Green",
+        "warning": "Yellow",
+        "error": "Red",
+        "info": "Blue"
+      },
+      "banner": {
+        "enabled": true,
+        "showVersion": true,
+        "showProject": true,
+        "showStatus": true
+      }
+    },
+    "menus": {
+      "showNumbers": true,
+      "showDescriptions": true,
+      "groupByCategory": true,
+      "showShortcuts": true
+    }
+  },
+  "security": {
+    "encryption": {
+      "enabled": false,
+      "algorithm": "AES-256",
+      "keyFile": ".sfdc-toolkit/security.key"
+    },
+    "audit": {
+      "enabled": true,
+      "logAllActions": true,
+      "retentionDays": 90
+    },
+    "permissions": {
+      "requireAdminForSystemChanges": true,
+      "requireConfirmationForDestructiveActions": true
+    }
+  },
+  "performance": {
+    "caching": {
+      "enabled": true,
+      "ttl": 3600,
+      "maxSize": 100
+    },
+    "parallelProcessing": {
+      "enabled": true,
+      "maxThreads": 4
+    },
+    "memory": {
+      "maxUsageMB": 512,
+      "cleanupInterval": 300
+    }
+  },
+  "integration": {
+    "git": {
+      "enabled": true,
+      "autoCommit": false,
+      "commitMessage": "SFDC Toolkit: {action} - {timestamp}"
+    },
+    "vscode": {
+      "enabled": true,
+      "autoOpen": true,
+      "diffView": true
+    },
+    "ci": {
+      "enabled": false,
+      "pipeline": "azure-devops"
+    }
+  },
+  "troubleshooting": {
+    "debugMode": false,
+    "verboseLogging": false,
+    "performanceMonitoring": false,
+    "errorReporting": {
+      "enabled": false,
+      "includeStackTrace": true,
+      "includeSystemInfo": false
+    }
+  },
+  "updates": {
+    "checkForUpdates": true,
+    "autoUpdate": false,
+    "updateChannel": "stable",
+    "lastChecked": null
+  }
+}
